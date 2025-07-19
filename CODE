@@ -1,0 +1,41 @@
+const int mosfetPin = 2;   
+const int buttonPin = 3; 
+
+bool powerState = false;    
+
+unsigned long autoOffTime = 5000; 
+unsigned long lastOnTime = 0;    
+
+
+void setup() {
+  
+  pinMode(mosfetPin, OUTPUT);
+  digitalWrite(mosfetPin, LOW); 
+  
+  pinMode(buttonPin, INPUT_PULLUP); 
+  Serial.begin(9600);  
+  
+}
+
+void loop() {
+
+  if (digitalRead(buttonPin) == LOW) {
+    delay(50); 
+    
+    if (digitalRead(buttonPin) == LOW) { 
+      
+      powerState = !powerState;
+      digitalWrite(mosfetPin, powerState ? HIGH : LOW);
+      lastOnTime = millis(); 
+      
+      delay(300); 
+    }
+  }
+
+  if (powerState && (millis() - lastOnTime >= autoOffTime)) {
+    
+    powerState = false;
+    digitalWrite(mosfetPin, LOW);
+    
+  }
+}
